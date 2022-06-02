@@ -1,0 +1,20 @@
+{
+  "name": "web-ext-msg-passing",
+  "version": "1.0.0",
+  "description": "simple web extension message passing library",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --minify --outdir=dist --allow-overwrite --analyze --format=esm"
+  },
+  "keywords": [
+    "esbuild"
+  ],
+  "author": "kami25565@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.14.11"
+  },
+  "dependencies": {
+    "@types/chrome": "^0.0.188"
+  }
+}
