@@ -18,7 +18,10 @@
     "build:cjs": "esbuild src/index.ts --bundle --minify --allow-overwrite --analyze --format=cjs --outfile=dist/index.js"
   },
   "keywords": [
-    "esbuild"
+    "esbuild",
+    "browser",
+    "extension",
+    "typescript"
   ],
   "author": "kami25565@gmail.com",
   "license": "MIT",
