@@ -1,0 +1,1 @@
+export const DEFAULT_CATE_NAME = "__def__"
