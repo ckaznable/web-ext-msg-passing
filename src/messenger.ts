@@ -14,7 +14,7 @@ export class Sender<
   }
 
   /**
-   * 傳送一次性訊息
+   * send once message to bg
    */
   send<P extends MessageHandleParameter<T, Q>>(type: Q, msg?: P) {
     const handler = new Messenger<T, Q, N>(this.namespace)
@@ -22,7 +22,7 @@ export class Sender<
   }
 
   /**
-    * 傳送需要溝通的訊息
+    * send message and receive response
     */
   sendWithResponse<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
     const handler = new Messenger<T, Q, N>(this.namespace)
@@ -53,21 +53,21 @@ export class Messenger<
   }
 
   /**
-   * 傳送訊息到後台
+   * send message to bg
    */
   send<P extends MessageHandleParameter<T, Q>>(type: Q, msg: P) {
     this.port.postMessage({type, msg})
   }
 
   /**
-   * 監聽用的callback
+   * when received message callback
    */
   onMessage<R extends MessageHandleReplyData<T, Q>>(type: Q, callback: (data: R)=>void) {
     this.callback[type] = callback
   }
 
   /**
-   * 開始監聽 不呼叫這個方法 就算設定onMessage也沒用
+   * mount listener
    */
   listen() {
     this.port.onMessage.addListener(({type, data}) => {
@@ -79,7 +79,7 @@ export class Messenger<
   }
 
   /**
-   * 中斷連線
+   * disconnect port session
    */
   dc() {
     this.port.disconnect()
