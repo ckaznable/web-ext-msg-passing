@@ -23,6 +23,9 @@
     "extension",
     "typescript"
   ],
+  "repository": {
+    "url": "https://github.com/ckaznable/web-ext-msg-passing"
+  },
   "author": "kami25565@gmail.com",
   "license": "MIT",
   "devDependencies": {
