@@ -26,6 +26,13 @@
   "repository": {
     "url": "https://github.com/ckaznable/web-ext-msg-passing"
   },
+  "files": [
+    "dist",
+    "types/index.d.ts",
+    "src",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "author": "kami25565@gmail.com",
   "license": "MIT",
   "devDependencies": {
