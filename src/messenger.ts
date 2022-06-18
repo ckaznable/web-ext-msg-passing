@@ -1,5 +1,5 @@
-import { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate } from "./types"
 import { DEFAULT_CATE_NAME } from "./static"
+import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate } from "./types"
 
 export class Sender<
   T extends MessageHandleTemplate,
