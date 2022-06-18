@@ -15,7 +15,7 @@
   },
   "unpkg": "./dist/index.umd.js",
   "scripts": {
-    "build": "microbundle",
+    "build": "microbundle && node script/post_build.js",
     "dev": "microbundle watch"
   },
   "keywords": [
