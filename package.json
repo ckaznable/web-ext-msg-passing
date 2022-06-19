@@ -3,20 +3,18 @@
   "version": "0.0.1",
   "description": "simple web extension message passing library",
   "type": "module",
-  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
   "source": "src/index.ts",
-  "types": "types/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.esm.js",
-      "default": "./dist/index.modern.js"
+      "default": "./dist/index.js"
     }
   },
-  "unpkg": "./dist/index.umd.js",
   "scripts": {
-    "build": "microbundle && node script/post_build.js",
-    "dev": "microbundle watch"
+    "build": "tsc",
+    "dev": "tsc -w"
   },
   "keywords": [
     "browser",
@@ -27,16 +25,11 @@
     "url": "https://github.com/ckaznable/web-ext-msg-passing"
   },
   "files": [
-    "dist",
-    "types/index.d.ts",
-    "src",
-    "README.md",
-    "CHANGELOG.md"
+    "dist"
   ],
   "author": "kami25565@gmail.com",
   "license": "MIT",
   "devDependencies": {
-    "microbundle": "^0.15.0",
     "typescript": "^4.7.3"
   },
   "dependencies": {
