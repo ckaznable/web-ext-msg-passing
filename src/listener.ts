@@ -1,7 +1,7 @@
-import { DEFAULT_CATE_NAME } from "./static"
+import { DEFAULT_NAMESPACE } from "./static"
 import type { MessageHandle, MessageHandleTemplate } from "./types"
 
-type MiddlewareData = {
+export type MiddlewareData = {
   namespace: string;
   type: string;
   data: any;
@@ -14,7 +14,7 @@ const middlewareHandle: Record<string, (data: MiddlewareData) => void> = {}
  * listen multiple handle in one call
  */
 export function listenGroup<T extends MessageHandleTemplate>(group: T) {
-  listenNamespaceGroup(DEFAULT_CATE_NAME, group)
+  listenNamespaceGroup(DEFAULT_NAMESPACE, group)
 }
 
 /**
@@ -30,7 +30,7 @@ export function listenNamespaceGroup<T extends MessageHandleTemplate>(namespace:
  * listen handle
  */
 export function listen<T extends MessageHandle>(type: string, cb: T) {
-  listenNamespace(DEFAULT_CATE_NAME, type, cb)
+  listenNamespace(DEFAULT_NAMESPACE, type, cb)
 }
 
 /**
@@ -48,7 +48,7 @@ export function listenNamespace<T extends MessageHandle>(namespace: string, type
  * listen middleware
  */
 export function listenMiddleware(cb: () => void) {
-  middlewareHandle[DEFAULT_CATE_NAME] = cb
+  middlewareHandle[DEFAULT_NAMESPACE] = cb
 }
 
 /**
@@ -62,7 +62,7 @@ export function listenNamespaceMiddleware(namespace: string, cb: () => void) {
  * remove handle
  */
 export function removeListener(type: string) {
-  removeNamespaceListener(DEFAULT_CATE_NAME, type)
+  removeNamespaceListener(DEFAULT_NAMESPACE, type)
 }
 
 /**
@@ -82,7 +82,7 @@ export function removeNamespaceListener(namespace: string, type: string) {
  * clear handle and middleware
  */
 export function clear() {
-  clearNamespace(DEFAULT_CATE_NAME)
+  clearNamespace(DEFAULT_NAMESPACE)
 }
 
 /**

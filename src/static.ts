@@ -1,1 +1,1 @@
-export const DEFAULT_CATE_NAME = "__def__"
+export const DEFAULT_NAMESPACE = "__def__"

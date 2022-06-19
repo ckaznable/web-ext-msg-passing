@@ -1,4 +1,4 @@
-import { DEFAULT_CATE_NAME } from "./static"
+import { DEFAULT_NAMESPACE } from "./static"
 import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate } from "./types"
 
 export class Sender<
@@ -9,7 +9,7 @@ export class Sender<
 
   namespace: N
 
-  constructor(namespace: N = DEFAULT_CATE_NAME as N) {
+  constructor(namespace: N = DEFAULT_NAMESPACE as N) {
     this.namespace = namespace
   }
 
@@ -84,4 +84,29 @@ export class Messenger<
   dc() {
     this.port.disconnect()
   }
+}
+
+/**
+ * quick use sender helper
+*/
+export function send<
+  T extends MessageHandleTemplate,
+  Q extends keyof T,
+  P extends MessageHandleParameter<T, Q>
+> (type: Q, msg?: P) {
+  const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
+  return sender.send(type, msg)
+}
+
+/**
+ * quick use sender helper with response
+ */
+export function sendWithResponse<
+  T extends MessageHandleTemplate,
+  Q extends keyof T,
+  P extends MessageHandleParameter<T, Q>,
+  R extends MessageHandleReplyData<T, Q>
+> (type: Q, msg?: P): R {
+  const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
+  return sender.sendWithResponse(type, msg) as R
 }
