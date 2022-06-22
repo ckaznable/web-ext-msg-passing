@@ -3,8 +3,8 @@ import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTempl
 
 export class Sender<
   T extends MessageHandleTemplate,
-  Q extends keyof T,
-  N extends string
+  Q extends keyof T = keyof T,
+  N extends string = string
 > {
 
   namespace: N
@@ -38,8 +38,8 @@ export class Sender<
 
 export class Messenger<
   T extends MessageHandleTemplate,
-  Q extends keyof T,
-  N extends string
+  Q extends keyof T = keyof T,
+  N extends string = string
 > {
   src: N
   port: chrome.runtime.Port
