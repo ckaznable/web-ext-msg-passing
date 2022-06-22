@@ -6,10 +6,10 @@ export type MessageHandleTemplate = Record<string, MessageHandle>
 
 export type MessageHandleParameter<
   T extends MessageHandleTemplate,
-  Q extends keyof T
+  Q extends keyof T = keyof T
 > = T[Q] extends MessageHandle<infer _, infer U> ? U : never
 
 export type MessageHandleReplyData<
   T extends MessageHandleTemplate,
-  Q extends keyof T
+  Q extends keyof T = keyof T
 > = T[Q] extends MessageHandle<infer U, infer _> ? U : never

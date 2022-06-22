@@ -1,5 +1,5 @@
 import { DEFAULT_NAMESPACE } from "./static"
-import type { MessageHandle, MessageHandleTemplate } from "./types"
+import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate } from "./types"
 
 export type MiddlewareData = {
   namespace: string;
@@ -13,35 +13,45 @@ const middlewareHandle: Record<string, (data: MiddlewareData) => void> = {}
 /**
  * listen multiple handle in one call
  */
-export function listenGroup<T extends MessageHandleTemplate>(group: T) {
+export function listenGroup<T extends MessageHandleTemplate>(group: Partial<T>) {
   listenNamespaceGroup(DEFAULT_NAMESPACE, group)
 }
 
 /**
  * listen multiple handle with namespace in one call
  */
-export function listenNamespaceGroup<T extends MessageHandleTemplate>(namespace: string, group: T) {
+export function listenNamespaceGroup<T extends MessageHandleTemplate>(namespace: string, group: Partial<T>) {
   (<Array<keyof T>>Object.keys(group)).forEach((fnName) => {
-    listenNamespace(namespace, fnName as string, group[fnName] as unknown as MessageHandle<any, null>)
+    listenNamespace(namespace, fnName as string, group[fnName] as unknown as (data: any) => void)
   })
 }
 
 /**
  * listen handle
  */
-export function listen<T extends MessageHandle>(type: string, cb: T) {
-  listenNamespace(DEFAULT_NAMESPACE, type, cb)
+export function listen<
+  T extends MessageHandleTemplate,
+  Q extends keyof T = keyof T,
+  P extends MessageHandleParameter<T, Q> = MessageHandleParameter<T, Q>,
+  R extends MessageHandleReplyData<T, Q> = MessageHandleReplyData<T, Q>
+>(type: Q, cb: MessageHandle<P, R>) {
+  listenNamespace<T>(DEFAULT_NAMESPACE, type, cb)
 }
 
 /**
  * listen handle with namespace
  */
-export function listenNamespace<T extends MessageHandle>(namespace: string, type: string, cb: T) {
+export function listenNamespace<
+  T extends MessageHandleTemplate,
+  Q extends keyof T = keyof T,
+  P extends MessageHandleParameter<T, Q> = MessageHandleParameter<T, Q>,
+  R extends MessageHandleReplyData<T, Q> = MessageHandleReplyData<T, Q>
+>(namespace: string, type: Q, cb: MessageHandle<P, R>) {
   if(!handler[namespace]) {
     handler[namespace] = {} as MessageHandleTemplate
   }
 
-  handler[namespace][type] = cb
+  handler[namespace][type as keyof MessageHandleTemplate] = cb
 }
 
 /**
