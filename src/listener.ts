@@ -47,14 +47,14 @@ export function listenNamespace<T extends MessageHandle>(namespace: string, type
 /**
  * listen middleware
  */
-export function listenMiddleware(cb: () => void) {
+export function listenMiddleware(cb: (data: MiddlewareData) => void) {
   middlewareHandle[DEFAULT_NAMESPACE] = cb
 }
 
 /**
  * listen middleware with namespace
  */
-export function listenNamespaceMiddleware(namespace: string, cb: () => void) {
+export function listenNamespaceMiddleware(namespace: string, cb: (data: MiddlewareData) => void) {
   middlewareHandle[namespace] = cb
 }
 
