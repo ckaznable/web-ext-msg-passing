@@ -1,11 +1,5 @@
 import { DEFAULT_NAMESPACE } from "./static"
-import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate } from "./types"
-
-export type MiddlewareData = {
-  namespace: string;
-  type: string;
-  data: any;
-}
+import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData } from "./types"
 
 const handler: Record<string, MessageHandleTemplate> = {}
 const middlewareHandle: Record<string, (data: MiddlewareData) => void> = {}

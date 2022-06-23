@@ -13,3 +13,15 @@ export type MessageHandleReplyData<
   T extends MessageHandleTemplate,
   Q extends keyof T = keyof T
 > = T[Q] extends MessageHandle<infer _, infer U> ? U : never
+
+export type PassingData<T = any> = {
+  data: T;
+  type: string;
+  namespace: string;
+}
+
+export type MiddlewareData = {
+  namespace: string;
+  type: string;
+  data: any;
+}

@@ -1,5 +1,4 @@
 export  {
-  MiddlewareData,
   listen,
   listenGroup,
   listenNamespaceGroup,
@@ -32,4 +31,6 @@ export {
   MessageHandleTemplate,
   MessageHandleParameter,
   MessageHandleReplyData,
+  MiddlewareData,
+  PassingData,
 } from "./types"
