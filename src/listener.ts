@@ -1,5 +1,5 @@
-import { DEFAULT_NAMESPACE } from "./static"
-import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData } from "./types"
+import { DEFAULT_NAMESPACE, IS_CONTENT_SCRIPT } from "./static"
+import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData, PassingData } from "./types"
 
 const handler: Record<string, MessageHandleTemplate> = {}
 const middlewareHandle: Record<string, (data: MiddlewareData) => void> = {}
@@ -115,38 +115,59 @@ export function clearAll() {
   })
 }
 
+function getHandler(namespace: string, sender: chrome.runtime.MessageSender) {
+  return handler[namespace] || handler[`${namespace}.${sender?.tab?.id||""}`]
+}
+
+function onHandle(namespace: string, type: string, msg: any, sender: chrome.runtime.MessageSender, sendResponse: (data: any)=>void) {
+  const portHandler = getHandler(namespace, sender)
+  if(!portHandler) {
+    return
+  }
+
+  const mwh = middlewareHandle[namespace] || middlewareHandle[`${namespace}.${sender.tab?.id||""}`]
+  mwh && mwh({type, msg, name: namespace})
+
+  const methodHandler = portHandler[type] || portHandler[`${type}.${sender.tab?.id||""}`]
+  methodHandler && methodHandler.call(msg, msg, sendResponse, sender.tab, sender)
+}
+
 function onConnect(port: chrome.runtime.Port) {
-  const portHandler = handler[port.name] || handler[`${port.name}.${port.sender?.tab?.id||""}`]
+  const portHandler = getHandler(port.name, port.sender)
   if(portHandler) {
-    port.onMessage.addListener((msg, { sender }) => {
-      if(!sender) {
-        return
-      }
+    port.onMessage.addListener((data, { sender }) => {
+      if(!sender) return
 
-      const mwh = middlewareHandle[port.name] || middlewareHandle[`${port.name}.${sender.tab?.id||""}`]
-      if(mwh) {
-        mwh({
-          namespace: port.name,
-          type: msg.type,
-          data: msg.msg
-        })
-      }
-
-      const methodHandler = portHandler[msg.type] || portHandler[`${msg.type}.${sender.tab?.id||""}`]
-      methodHandler && methodHandler.call(msg.msg, msg.msg, data => {
+      onHandle(port.name, data.type, data.data, sender, data => {
         port.postMessage({
-          type: msg.type,
-          data
+          type: data.type,
+          msg: data
         })
-      }, sender.tab, sender, port)
+      })
     })
   }
+}
+
+function onMessage({name, type, msg}: PassingData, sender: chrome.runtime.MessageSender, sendResponse: (data: any)=>void) {
+  onHandle(name, type, msg, sender, data => {
+    sendResponse({
+      type,
+      msg: data
+    })
+  })
+
+  return true
 }
 
 /**
  * start listen
  */
 export function installListener() {
+  if(IS_CONTENT_SCRIPT) {
+    chrome.runtime.onMessage.addListener(onMessage)
+    return
+  }
+
   chrome.runtime.onConnect.addListener(onConnect)
 }
 
@@ -154,5 +175,10 @@ export function installListener() {
  * stop listen
  */
 export function uninstallListener() {
+  if(IS_CONTENT_SCRIPT) {
+    chrome.runtime.onMessage.removeListener(onMessage)
+    return
+  }
+
   chrome.runtime.onConnect.removeListener(onConnect)
 }

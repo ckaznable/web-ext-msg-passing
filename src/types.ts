@@ -15,13 +15,9 @@ export type MessageHandleReplyData<
 > = T[Q] extends MessageHandle<infer _, infer U> ? U : never
 
 export type PassingData<T = any> = {
-  data: T;
+  msg: T;
   type: string;
-  namespace: string;
+  name: string;
 }
 
-export type MiddlewareData = {
-  namespace: string;
-  type: string;
-  data: any;
-}
+export type MiddlewareData<T = any> = PassingData<T>

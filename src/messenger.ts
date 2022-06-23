@@ -1,5 +1,6 @@
 import { DEFAULT_NAMESPACE } from "./static"
-import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate } from "./types"
+import { getCurrentTabId } from "./util"
+import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, PassingData } from "./types"
 
 export class Sender<
   T extends MessageHandleTemplate,
@@ -32,6 +33,19 @@ export class Sender<
         resolve(data)
       })
       handler.send(type, msg as P)
+    })
+  }
+
+  async sendToContent<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R|undefined> {
+    const tabId = await getCurrentTabId()
+    if(!tabId) {
+      return
+    }
+
+    return new Promise(resolve => {
+      chrome.tabs.sendMessage(tabId, {type, msg, name: this.namespace}, ({msg}: PassingData) => {
+        resolve(msg)
+      })
     })
   }
 }
@@ -70,10 +84,10 @@ export class Messenger<
    * mount listener
    */
   listen() {
-    this.port.onMessage.addListener(({type, data}) => {
+    this.port.onMessage.addListener(({type, msg}) => {
       const method = type as Q
       if(this.callback[method]) {
-        this.callback[method](data)
+        this.callback[method](msg)
       }
     })
   }
@@ -109,4 +123,17 @@ export function sendWithResponse<
 > (type: Q, msg?: P): R {
   const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
   return sender.sendWithResponse(type, msg) as R
+}
+
+/**
+ * quick use sender helper with response
+ */
+export function sendToContent<
+  T extends MessageHandleTemplate,
+  Q extends keyof T,
+  P extends MessageHandleParameter<T, Q>,
+  R extends MessageHandleReplyData<T, Q>
+> (type: Q, msg?: P): R {
+  const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
+  return sender.sendToContent(type, msg) as R
 }

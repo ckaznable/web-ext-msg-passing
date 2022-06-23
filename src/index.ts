@@ -18,6 +18,7 @@ export {
   Sender,
   send,
   sendWithResponse,
+  sendToContent,
 } from "./messenger"
 
 export {
