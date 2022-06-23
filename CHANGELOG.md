@@ -1,6 +1,7 @@
 # [0.0.3]
 
 * improve typescript supported
+* add sendToContent, supported send event to content script
 
 # [0.0.2] (2022-06-22)
 
