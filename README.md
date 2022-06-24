@@ -1,3 +1,5 @@
+[![npm version](https://img.shields.io/npm/v/web-ext-msg-passing?color=g)](https://www.npmjs.com/package/web-ext-msg-passing)
+
 # web-ext-msg-passing
 
 simple web extension message passing library
