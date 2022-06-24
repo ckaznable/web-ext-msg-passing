@@ -1,4 +1,4 @@
-# [0.0.3]
+# [0.0.3] (2022-06-24)
 
 * improve typescript supported
 * add sendToContent, supported send event to content script
