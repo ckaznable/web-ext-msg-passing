@@ -1,3 +1,13 @@
+# [0.0.4] (2022-06-25)
+
+## Types
+
+* fix sendToContent and sendWithResponse return wrong type
+
+## Bugs
+
+* fix sendWithResponse can't send response problem
+
 # [0.0.3] (2022-06-24)
 
 * improve typescript supported
