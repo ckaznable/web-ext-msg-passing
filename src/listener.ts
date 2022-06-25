@@ -138,10 +138,10 @@ function onConnect(port: chrome.runtime.Port) {
     port.onMessage.addListener((data, { sender }) => {
       if(!sender) return
 
-      onHandle(port.name, data.type, data.data, sender, data => {
+      onHandle(port.name, data.type, data.data, sender, _data => {
         port.postMessage({
           type: data.type,
-          msg: data
+          msg: _data
         })
       })
     })
