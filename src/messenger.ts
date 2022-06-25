@@ -120,9 +120,9 @@ export function sendWithResponse<
   Q extends keyof T,
   P extends MessageHandleParameter<T, Q>,
   R extends MessageHandleReplyData<T, Q>
-> (type: Q, msg?: P): R {
+> (type: Q, msg?: P): Promise<R> {
   const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.sendWithResponse(type, msg) as R
+  return sender.sendWithResponse(type, msg)
 }
 
 /**
@@ -133,7 +133,7 @@ export function sendToContent<
   Q extends keyof T,
   P extends MessageHandleParameter<T, Q>,
   R extends MessageHandleReplyData<T, Q>
-> (type: Q, msg?: P): R {
+> (type: Q, msg?: P): Promise<R|undefined> {
   const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.sendToContent(type, msg) as R
+  return sender.sendToContent(type, msg)
 }
