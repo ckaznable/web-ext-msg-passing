@@ -24,11 +24,14 @@ yarn add web-ext-msg-passing
 
 ## Usage
 
-in background:
+### Basic Usage
+
 ```javascript
+// in background.js
+
 import { listen, listenGroup, installListener } from "web-ext-msg-passing"
 
-// required in background
+// installListener is required if you want listen event
 installListener()
 
 // listen one event
@@ -51,9 +54,9 @@ listenGroup({
 })
 ```
 
-in content script or popup script:
-
 ```javascript
+// in content script or popup
+
 import { sendWithResponse } from "web-ext-msg-passing"
 
 // get api background response.
@@ -63,3 +66,33 @@ await sendWithResponse("callApi2", {id: 123})
 // call background listener but not need response.
 send("otherFn", {id: 3})
 ```
+
+### Send event to content script from background or popup
+
+```javascript
+// in background or popup
+
+import { sendToContent } from "web-ext-msg-passing"
+
+sendToContent("getContentHtml").then(response => {
+  // response will get current page html
+})
+```
+
+```javascript
+// in content script
+
+import { installListener, listen } from "web-ext-msg-passing"
+
+// installListener is required if you want listen event
+installListener()
+
+// listen event
+listen("getContentHtml", (_, reply) => {
+  reply(document.documentElement.innerHTML)
+})
+```
+
+## Typescript
+
+Refer to this [repository](https://github.com/ckaznable/web-ext-msg-passing-example/tree/main/src/typescript) for an example of how use in typescript
