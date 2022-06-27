@@ -1,3 +1,18 @@
+# [0.0.5]
+
+## Added UnionSender
+
+UnionSender able compose different namespace Sender in one Sender
+
+```javascript
+// Sender
+send(type, parameter)
+
+// Union Sender
+send(namespace, type, parameter)
+send(namespace2, type, parameter)
+```
+
 # [0.0.4] (2022-06-25)
 
 ## Types
