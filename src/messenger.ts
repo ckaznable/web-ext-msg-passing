@@ -3,13 +3,10 @@ import { getCurrentTabId } from "./util"
 import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, PassingData, UnionMessageHandleTemplate } from "./types"
 
 export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof T]: Sender<T[K]>}> {
-  source: T
   sender: S
 
-  constructor(source: T) {
-    this.source = source
-
-    this.sender = (<(keyof T)[]>Object.keys(source)).reduce((acc, namespace: string) => {
+  constructor(namespaceList: (keyof T)[]) {
+    this.sender = namespaceList.reduce((acc, namespace: string) => {
       acc[namespace as keyof S] = new Sender<T[keyof T]>(namespace) as unknown as S[keyof S]
       return acc
     }, {} as S)
