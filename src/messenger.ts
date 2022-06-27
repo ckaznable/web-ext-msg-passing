@@ -1,6 +1,36 @@
 import { DEFAULT_NAMESPACE } from "./static"
 import { getCurrentTabId } from "./util"
-import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, PassingData } from "./types"
+import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, PassingData, UnionMessageHandleTemplate } from "./types"
+
+export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof T]: Sender<T[K]>}> {
+  source: T
+  sender: S
+
+  constructor(source: T) {
+    this.source = source
+
+    this.sender = (<(keyof T)[]>Object.keys(source)).reduce((acc, namespace: string) => {
+      acc[namespace as keyof S] = new Sender<T[keyof T]>(namespace) as S[keyof S]
+      return acc
+    }, {} as S)
+  }
+
+  getSender<E extends MessageHandleTemplate>(namespace: keyof T): Sender<E> {
+    return this.sender[namespace as unknown as keyof S] as Sender<E>
+  }
+
+  send<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>>(namespace: N, type: Q, msg?: P) {
+    return (this.getSender(namespace)).send(type as string, msg)
+  }
+
+  sendWithResponse<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
+    return (this.getSender(namespace)).sendWithResponse(type as string, msg)
+  }
+
+  sendToContent<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
+    return (this.getSender(namespace)).sendToContent(type as string, msg)
+  }
+}
 
 export class Sender<
   T extends MessageHandleTemplate,
@@ -13,18 +43,17 @@ export class Sender<
   constructor(namespace: N = DEFAULT_NAMESPACE as N) {
     this.namespace = namespace
   }
-
   /**
    * send once message to bg
    */
-  send<P extends MessageHandleParameter<T, Q>>(type: Q, msg?: P) {
+  send<P extends MessageHandleParameter<T, Q>>(type: Q, msg: P = undefined) {
     const handler = new Messenger<T, Q, N>(this.namespace)
     handler.send(type, msg as P)
   }
 
   /**
-    * send message and receive response
-    */
+   * send message and receive response
+   */
   sendWithResponse<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
     const handler = new Messenger<T, Q, N>(this.namespace)
     return new Promise(resolve => {

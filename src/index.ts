@@ -15,6 +15,7 @@ export  {
 } from "./listener"
 
 export {
+  UnionSender,
   Sender,
   send,
   sendWithResponse,
@@ -30,6 +31,7 @@ export {
   ReceiverHandle,
   MessageHandle,
   MessageHandleTemplate,
+  UnionMessageHandleTemplate,
   MessageHandleParameter,
   MessageHandleReplyData,
   MiddlewareData,
