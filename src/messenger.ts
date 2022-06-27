@@ -10,13 +10,13 @@ export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof 
     this.source = source
 
     this.sender = (<(keyof T)[]>Object.keys(source)).reduce((acc, namespace: string) => {
-      acc[namespace as keyof S] = new Sender<T[keyof T]>(namespace) as S[keyof S]
+      acc[namespace as keyof S] = new Sender<T[keyof T]>(namespace) as unknown as S[keyof S]
       return acc
     }, {} as S)
   }
 
   getSender<E extends MessageHandleTemplate>(namespace: keyof T): Sender<E> {
-    return this.sender[namespace as unknown as keyof S] as Sender<E>
+    return this.sender[namespace as unknown as keyof S] as unknown as Sender<E>
   }
 
   send<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>>(namespace: N, type: Q, msg?: P) {
