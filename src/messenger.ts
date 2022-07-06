@@ -54,7 +54,7 @@ export class Sender<
 
   /**
    * send message and receive response
-   * @deprecated since version 0.1.0 please use send method
+   * @deprecated since version 0.0.6 please use send method
    */
   sendWithResponse<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
     return this.send(type, msg)
@@ -138,7 +138,7 @@ export function send<
 
 /**
  * quick use sender helper with response
- * @deprecated since version 0.1.0 please use send method
+ * @deprecated since version 0.0.6 please use send method
  */
 export function sendWithResponse<
   T extends MessageHandleTemplate,
