@@ -1,4 +1,4 @@
-import { DEFAULT_NAMESPACE, IS_CONTENT_SCRIPT } from "./static"
+import { DEFAULT_NAMESPACE } from "./static"
 import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData, PassingData } from "./types"
 
 const handler: Record<string, MessageHandleTemplate> = {}
@@ -163,11 +163,7 @@ function onMessage({name, type, msg}: PassingData, sender: chrome.runtime.Messag
  * start listen
  */
 export function installListener() {
-  if(IS_CONTENT_SCRIPT) {
-    chrome.runtime.onMessage.addListener(onMessage)
-    return
-  }
-
+  chrome.runtime.onMessage.addListener(onMessage)
   chrome.runtime.onConnect.addListener(onConnect)
 }
 
@@ -175,10 +171,6 @@ export function installListener() {
  * stop listen
  */
 export function uninstallListener() {
-  if(IS_CONTENT_SCRIPT) {
-    chrome.runtime.onMessage.removeListener(onMessage)
-    return
-  }
-
+  chrome.runtime.onMessage.removeListener(onMessage)
   chrome.runtime.onConnect.removeListener(onConnect)
 }

@@ -40,26 +40,24 @@ export class Sender<
   constructor(namespace: N = DEFAULT_NAMESPACE as N) {
     this.namespace = namespace
   }
+
   /**
    * send once message to bg
    */
-  send<P extends MessageHandleParameter<T, Q>>(type: Q, msg: P = undefined) {
-    const handler = new Messenger<T, Q, N>(this.namespace)
-    handler.send(type, msg as P)
+  send<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
+    return new Promise(resolve => {
+      chrome.runtime.sendMessage({type, msg, name: this.namespace} as PassingData, ({msg}: PassingData<R>) => {
+        resolve(msg)
+      })
+    })
   }
 
   /**
    * send message and receive response
+   * @deprecated since version 0.1.0 please use send method
    */
   sendWithResponse<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
-    const handler = new Messenger<T, Q, N>(this.namespace)
-    return new Promise(resolve => {
-      handler.onMessage(type, (data: R) => {
-        handler.dc()
-        resolve(data)
-      })
-      handler.send(type, msg as P)
-    })
+    return this.send(type, msg)
   }
 
   async sendToContent<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R|undefined> {
@@ -69,7 +67,7 @@ export class Sender<
     }
 
     return new Promise(resolve => {
-      chrome.tabs.sendMessage(tabId, {type, msg, name: this.namespace}, ({msg}: PassingData) => {
+      chrome.tabs.sendMessage(tabId, {type, msg, name: this.namespace} as PassingData, ({msg}: PassingData<R>) => {
         resolve(msg)
       })
     })
@@ -96,7 +94,7 @@ export class Messenger<
    * send message to bg
    */
   send<P extends MessageHandleParameter<T, Q>>(type: Q, msg: P) {
-    this.port.postMessage({type, msg})
+    this.port.postMessage({type, msg} as PassingData)
   }
 
   /**
@@ -140,6 +138,7 @@ export function send<
 
 /**
  * quick use sender helper with response
+ * @deprecated since version 0.1.0 please use send method
  */
 export function sendWithResponse<
   T extends MessageHandleTemplate,
