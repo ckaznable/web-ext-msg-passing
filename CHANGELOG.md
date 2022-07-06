@@ -1,3 +1,15 @@
+# [0.0.6]
+
+## Changes
+
+* change sender implement from `chrome.runtime.Port.postMessage` to `chrome.runtime.sendMessage`
+
+## Deprecated method
+
+* `sendWithResponse`
+* `UnionSender.sendWithResponse`
+* `Sender.sendWithResponse`
+
 # [0.0.5] (2022-06-27)
 
 ## Added UnionSender
