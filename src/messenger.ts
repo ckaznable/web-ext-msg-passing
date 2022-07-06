@@ -20,6 +20,9 @@ export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof 
     return (this.getSender(namespace)).send(type as string, msg)
   }
 
+  /**
+   * @deprecated since version 0.0.6 please use send method
+   */
   sendWithResponse<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
     return (this.getSender(namespace)).sendWithResponse(type as string, msg)
   }
