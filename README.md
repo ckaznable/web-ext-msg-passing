@@ -57,12 +57,12 @@ listenGroup({
 ```javascript
 // in content script or popup
 
-import { sendWithResponse } from "web-ext-msg-passing"
+import { send } from "web-ext-msg-passing"
 
 // get api background response.
-await sendWithResponse("callApi")
+await send("callApi")
 // get api background response with payload.
-await sendWithResponse("callApi2", {id: 123})
+await send("callApi2", {id: 123})
 // call background listener but not need response.
 send("otherFn", {id: 3})
 ```
