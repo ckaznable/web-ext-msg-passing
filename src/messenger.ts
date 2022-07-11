@@ -1,4 +1,4 @@
-import { DEFAULT_NAMESPACE } from "./static"
+import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static"
 import { getCurrentTabId } from "./util"
 import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, PassingData, UnionMessageHandleTemplate } from "./types"
 
@@ -16,19 +16,31 @@ export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof 
     return this.sender[namespace as unknown as keyof S] as unknown as Sender<E>
   }
 
-  send<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>>(namespace: N, type: Q, msg?: P) {
-    return (this.getSender(namespace)).send(type as string, msg)
+  async send<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
+    const response = await (this.getSender(namespace)).send(type as string, msg)
+
+    if(this.isErrorResponse(response)) {
+      throw new Error(response.error)
+    }
+
+    return response
   }
 
-  /**
-   * @deprecated since version 0.0.6 please use send method
-   */
-  sendWithResponse<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
-    return (this.getSender(namespace)).sendWithResponse(type as string, msg)
+  async sendToContent<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
+    const response = await (this.getSender(namespace)).sendToContent(type as string, msg)
+
+    if(this.isErrorResponse(response)) {
+      throw new Error(response.error)
+    }
+
+    return response
   }
 
-  sendToContent<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
-    return (this.getSender(namespace)).sendToContent(type as string, msg)
+  isErrorResponse(response: any) {
+    return typeof response === "object"
+      && "type" in response
+      && "error" in response
+      && response.type === ERROR_TYPE_RESPONSE
   }
 }
 
@@ -53,14 +65,6 @@ export class Sender<
         resolve(msg)
       })
     })
-  }
-
-  /**
-   * send message and receive response
-   * @deprecated since version 0.0.6 please use send method
-   */
-  sendWithResponse<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
-    return this.send(type, msg)
   }
 
   async sendToContent<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R|undefined> {
@@ -137,20 +141,6 @@ export function send<
 > (type: Q, msg?: P) {
   const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
   return sender.send(type, msg)
-}
-
-/**
- * quick use sender helper with response
- * @deprecated since version 0.0.6 please use send method
- */
-export function sendWithResponse<
-  T extends MessageHandleTemplate,
-  Q extends keyof T,
-  P extends MessageHandleParameter<T, Q>,
-  R extends MessageHandleReplyData<T, Q>
-> (type: Q, msg?: P): Promise<R> {
-  const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.sendWithResponse(type, msg)
 }
 
 /**

@@ -1,4 +1,4 @@
-import { DEFAULT_NAMESPACE } from "./static"
+import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static"
 import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData, PassingData } from "./types"
 
 const handler: Record<string, MessageHandleTemplate> = {}
@@ -119,7 +119,7 @@ function getHandler(namespace: string, sender: chrome.runtime.MessageSender) {
   return handler[namespace] || handler[`${namespace}.${sender?.tab?.id||""}`]
 }
 
-function onHandle(namespace: string, type: string, msg: any, sender: chrome.runtime.MessageSender, sendResponse: (data: any)=>void) {
+async function onHandle(namespace: string, type: string, msg: any, sender: chrome.runtime.MessageSender, sendResponse: (data: any)=>void) {
   const portHandler = getHandler(namespace, sender)
   if(!portHandler) {
     return
@@ -129,7 +129,26 @@ function onHandle(namespace: string, type: string, msg: any, sender: chrome.runt
   mwh && mwh({type, msg, name: namespace})
 
   const methodHandler = portHandler[type] || portHandler[`${type}.${sender.tab?.id||""}`]
-  methodHandler && methodHandler.call(msg, msg, sendResponse, sender.tab, sender)
+  if(!methodHandler) {
+    return
+  }
+
+  // keep response call only once
+  let callOnceFlag = false
+  const reply = (value: any) => {
+    if(callOnceFlag) return
+    callOnceFlag = true
+
+    sendResponse(value)
+  }
+
+  const replyError = error => {
+    reply({type: ERROR_TYPE_RESPONSE, error})
+  }
+
+  Promise.resolve(methodHandler.call(msg, msg, sender.tab, sender))
+    .then(reply)
+    .catch((e: any) => replyError(e?.message || e))
 }
 
 function onConnect(port: chrome.runtime.Port) {

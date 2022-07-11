@@ -1,3 +1,25 @@
+# [0.1.0]
+
+## Breaking Changes
+
+* removed deprecated method from code
+* change MessageHandle type declare, You can now return value or Promise directly without going through the reply method
+
+```typescript
+// type declare
+MessageHandle<T = any, Q = any> = (msg: T, tab: Required<chrome.tabs.Tab>, sender: chrome.runtime.MessageSender, port: chrome.runtime.Port) => Q|Promise<Q>|void
+
+// before
+listen("getAPI", (body, reply) => {
+  fetch("...", {body}).then(reply)
+})
+
+// since 0.1.0
+listen("getAPI", (body) => {
+  return fetch("...", {body})
+})
+```
+
 # [0.0.6] (2022-07-07)
 
 ## Changes
