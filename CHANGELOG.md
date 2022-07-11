@@ -11,12 +11,12 @@ MessageHandle<T = any, Q = any> = (msg: T, tab: Required<chrome.tabs.Tab>, sende
 
 // before
 listen("getAPI", (body, reply) => {
-  fetch("...", {body}).then(reply)
+  fetch("...", {body}).then(res => res.json()).then(reply)
 })
 
 // since 0.1.0
 listen("getAPI", (body) => {
-  return fetch("...", {body})
+  return fetch("...", {body}).then(res => res.json())
 })
 ```
 
