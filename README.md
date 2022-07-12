@@ -82,7 +82,7 @@ import { installListener, listen } from "web-ext-msg-passing"
 installListener()
 
 // listen event
-listen("getContentHtml", (_, reply) => document.documentElement.innerHTML)
+listen("getContentHtml", () => document.documentElement.innerHTML)
 ```
 
 ## Typescript
