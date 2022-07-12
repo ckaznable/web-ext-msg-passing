@@ -34,18 +34,18 @@ import { listen, listenGroup, installListener } from "web-ext-msg-passing"
 installListener()
 
 // listen one event
-listen("callApi", (_, reply) => {
+listen("callApi", () => {
   return fetch("<YOUR API URI>").then(res => res.json())
 })
 
 // listen multiple event
 listenGroup({
-  callApi2(parameter, reply) {
+  callApi2(parameter) {
     return fetch("<YOUR API URI>", {
       body: JSON.stringify(parameter)
     }).then(res => res.json())
   },
-  otherFn(parameter, reply) {
+  otherFn(parameter) {
     // do something...
   }
 })
