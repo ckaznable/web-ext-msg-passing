@@ -26,27 +26,24 @@ yarn add web-ext-msg-passing
 
 ### Basic Usage
 
+background:
 ```javascript
-// in background.js
-
 import { listen, listenGroup, installListener } from "web-ext-msg-passing"
 
 // installListener is required if you want listen event
 installListener()
 
 // listen one event
-listen("callApi", async (_, reply) => {
-  reply(await fetch("<YOUR API URI>").then(res => res.json()))
+listen("callApi", (_, reply) => {
+  return fetch("<YOUR API URI>").then(res => res.json())
 })
 
 // listen multiple event
 listenGroup({
   callApi2(parameter, reply) {
-    fetch("<YOUR API URI>", {
+    return fetch("<YOUR API URI>", {
       body: JSON.stringify(parameter)
-    }).then(res => {
-      return res.json()
-    }).then(reply)
+    }).then(res => res.json())
   },
   otherFn(parameter, reply) {
     // do something...
@@ -54,9 +51,8 @@ listenGroup({
 })
 ```
 
+content script or popup:
 ```javascript
-// in content script or popup
-
 import { send } from "web-ext-msg-passing"
 
 // get api background response.
@@ -69,9 +65,8 @@ send("otherFn", {id: 3})
 
 ### Send event to content script from background or popup
 
+background or popup:
 ```javascript
-// in background or popup
-
 import { sendToContent } from "web-ext-msg-passing"
 
 sendToContent("getContentHtml").then(response => {
@@ -79,9 +74,8 @@ sendToContent("getContentHtml").then(response => {
 })
 ```
 
+content script:
 ```javascript
-// in content script
-
 import { installListener, listen } from "web-ext-msg-passing"
 
 // installListener is required if you want listen event
