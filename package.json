@@ -1,6 +1,6 @@
 {
   "name": "web-ext-msg-passing",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "simple web extension message passing library",
   "type": "module",
   "module": "dist/index.js",
