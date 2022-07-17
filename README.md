@@ -1,6 +1,6 @@
 [![npm version](https://img.shields.io/npm/v/web-ext-msg-passing?color=g)](https://www.npmjs.com/package/web-ext-msg-passing)
 
-# web extension message passing wrapped (web-ext-msg-passing)
+# web extension message passing wrapped
 
 functional interface web extension message passing wrapped
 
