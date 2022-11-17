@@ -1,6 +1,10 @@
-# [0.1.1] (2022-11-17)
+# [0.1.2] (2022-11-17)
 
 * make sender parameter 2 is not required
+# [0.1.1] (2022-07-13)
+
+* update README
+* update package.json dependencies
 
 # [0.1.0] (2022-07-12)
 
