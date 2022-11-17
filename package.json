@@ -30,7 +30,7 @@
   "author": "kami25565@gmail.com",
   "license": "MIT",
   "devDependencies": {
-    "@types/chrome": "^0.0.193",
-    "typescript": "^4.7.3"
+    "@types/chrome": "^0.0.202",
+    "typescript": "^4.9.3"
   }
 }
