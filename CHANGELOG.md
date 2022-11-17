@@ -1,3 +1,7 @@
+# [0.1.1] (2022-11-17)
+
+* make sender parameter 2 is not required
+
 # [0.1.0] (2022-07-12)
 
 ## Breaking Changes
