@@ -1,6 +1,6 @@
 import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static"
 import { getCurrentTabId } from "./util"
-import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, PassingData, UnionMessageHandleTemplate } from "./types"
+import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, OptionalIfUndefined, PassingData, UnionMessageHandleTemplate } from "./types"
 
 export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof T]: Sender<T[K]>}> {
   sender: S
@@ -100,7 +100,7 @@ export class Messenger<
   /**
    * send message to bg
    */
-  send<P extends MessageHandleParameter<T, Q>>(type: Q, msg: P) {
+  send<P extends MessageHandleParameter<T, Q>>(type: Q, ...[msg]: OptionalIfUndefined<P>) {
     this.port.postMessage({type, msg} as PassingData)
   }
 
@@ -136,11 +136,11 @@ export class Messenger<
 */
 export function send<
   T extends MessageHandleTemplate,
-  Q extends keyof T,
-  P extends MessageHandleParameter<T, Q>
-> (type: Q, msg?: P) {
+  Q extends keyof T = keyof T,
+  P extends MessageHandleParameter<T, Q> = MessageHandleParameter<T, Q>
+> (type: Q, ...[msg]: OptionalIfUndefined<P>) {
   const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.send(type, msg)
+  return sender.send(type, msg as P)
 }
 
 /**
@@ -148,10 +148,10 @@ export function send<
  */
 export function sendToContent<
   T extends MessageHandleTemplate,
-  Q extends keyof T,
-  P extends MessageHandleParameter<T, Q>,
-  R extends MessageHandleReplyData<T, Q>
-> (type: Q, msg?: P): Promise<R|undefined> {
+  Q extends keyof T = keyof T,
+  P extends MessageHandleParameter<T, Q> = MessageHandleParameter<T, Q>,
+  R extends MessageHandleReplyData<T, Q> = MessageHandleReplyData<T, Q>
+> (type: Q, ...[msg]: OptionalIfUndefined<P>): Promise<R|undefined> {
   const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.sendToContent(type, msg)
+  return sender.sendToContent(type, msg as P)
 }
