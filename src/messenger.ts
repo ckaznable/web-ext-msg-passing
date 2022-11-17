@@ -16,7 +16,7 @@ export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof 
     return this.sender[namespace as unknown as keyof S] as unknown as Sender<E>
   }
 
-  async send<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
+  async send<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, ...[msg]: OptionalIfUndefined<P>): Promise<R> {
     const response = await (this.getSender(namespace)).send(type as string, msg)
 
     if(this.isErrorResponse(response)) {
@@ -26,7 +26,7 @@ export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof 
     return response
   }
 
-  async sendToContent<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, msg?: P): Promise<R> {
+  async sendToContent<N extends keyof T, E extends T[N], Q extends keyof E, P extends MessageHandleParameter<E, Q>, R extends MessageHandleReplyData<E, Q>>(namespace: N, type: Q, ...[msg]: OptionalIfUndefined<P>): Promise<R> {
     const response = await (this.getSender(namespace)).sendToContent(type as string, msg)
 
     if(this.isErrorResponse(response)) {
@@ -46,7 +46,6 @@ export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof 
 
 export class Sender<
   T extends MessageHandleTemplate,
-  Q extends keyof T = keyof T,
   N extends string = string
 > {
 
@@ -59,7 +58,7 @@ export class Sender<
   /**
    * send once message to bg
    */
-  send<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R> {
+  send<Q extends keyof T, P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, ...[msg]: OptionalIfUndefined<P>): Promise<R> {
     return new Promise(resolve => {
       chrome.runtime.sendMessage({type, msg, name: this.namespace} as PassingData, ({msg}: PassingData<R>) => {
         resolve(msg)
@@ -67,7 +66,7 @@ export class Sender<
     })
   }
 
-  async sendToContent<P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, msg?: P): Promise<R|undefined> {
+  async sendToContent<Q extends keyof T, P extends MessageHandleParameter<T, Q>, R extends MessageHandleReplyData<T, Q>>(type: Q, ...[msg]: OptionalIfUndefined<P>): Promise<R|undefined> {
     const tabId = await getCurrentTabId()
     if(!tabId) {
       return
@@ -139,8 +138,8 @@ export function send<
   Q extends keyof T = keyof T,
   P extends MessageHandleParameter<T, Q> = MessageHandleParameter<T, Q>
 > (type: Q, ...[msg]: OptionalIfUndefined<P>) {
-  const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.send(type, msg as P)
+  const sender = new Sender<T, typeof DEFAULT_NAMESPACE>()
+  return sender.send(type, msg as any)
 }
 
 /**
@@ -152,6 +151,6 @@ export function sendToContent<
   P extends MessageHandleParameter<T, Q> = MessageHandleParameter<T, Q>,
   R extends MessageHandleReplyData<T, Q> = MessageHandleReplyData<T, Q>
 > (type: Q, ...[msg]: OptionalIfUndefined<P>): Promise<R|undefined> {
-  const sender = new Sender<T, Q, typeof DEFAULT_NAMESPACE>()
-  return sender.sendToContent(type, msg as P)
+  const sender = new Sender<T, typeof DEFAULT_NAMESPACE>()
+  return sender.sendToContent(type, msg as any)
 }

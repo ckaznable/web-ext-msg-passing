@@ -1,7 +1,8 @@
 export type OptionalIfUndefined<T> = T extends undefined ? [param?: T] : [param: T]
+export type MessageHandleReturn<T> = T extends undefined ? void|undefined|Promise<void> : T extends boolean ? boolean|Promise<boolean> : T|Promise<T>
 export type ReceiverReply<T = any> = (msg: T) => void
 export type ReceiverHandle<T = any, Q = any> = (data: T, reply: ReceiverReply<Q>) => void
-export type MessageHandle<T = any, Q = any> = (msg: T, tab: Required<chrome.tabs.Tab>, sender: chrome.runtime.MessageSender, port: chrome.runtime.Port) => Q|Promise<Q>|void
+export type MessageHandle<T = any, Q = any> = (msg: T, tab: Required<chrome.tabs.Tab>, sender: chrome.runtime.MessageSender, port: chrome.runtime.Port) => MessageHandleReturn<Q>
 
 export type MessageHandleTemplate = Record<string, MessageHandle>
 export type UnionMessageHandleTemplate = Record<string, MessageHandleTemplate>
