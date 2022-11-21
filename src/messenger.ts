@@ -1,6 +1,6 @@
-import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static"
-import { getCurrentTabId } from "./util"
-import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, OptionalIfUndefined, PassingData, UnionMessageHandleTemplate } from "./types"
+import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static.js"
+import { getCurrentTabId } from "./util.js"
+import type { MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, OptionalIfUndefined, PassingData, UnionMessageHandleTemplate } from "./types.js"
 
 export class UnionSender<T extends UnionMessageHandleTemplate, S = {[K in keyof T]: Sender<T[K]>}> {
   sender: S

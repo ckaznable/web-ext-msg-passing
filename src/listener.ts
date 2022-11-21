@@ -1,5 +1,5 @@
-import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static"
-import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData, PassingData } from "./types"
+import { DEFAULT_NAMESPACE, ERROR_TYPE_RESPONSE } from "./static.js"
+import type { MessageHandle, MessageHandleParameter, MessageHandleReplyData, MessageHandleTemplate, MiddlewareData, PassingData } from "./types.js"
 
 const handler: Record<string, MessageHandleTemplate> = {}
 const middlewareHandle: Record<string, (data: MiddlewareData) => void> = {}

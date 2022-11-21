@@ -1,6 +1,6 @@
 {
   "name": "web-ext-msg-passing",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "functional interface web extension message passing wrapped",
   "type": "module",
   "module": "dist/index.js",

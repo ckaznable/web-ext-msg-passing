@@ -1,3 +1,7 @@
+# [0.1.4] (2022-11-21)
+
+* add import with ".js" extension name
+
 # [0.1.3] (2022-11-17)
 
 * apply v0.1.2 change to all sender
