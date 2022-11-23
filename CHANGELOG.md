@@ -1,3 +1,7 @@
+# [0.1.5] (2022-11-23)
+
+* add cjs build
+
 # [0.1.4] (2022-11-21)
 
 * add import with ".js" extension name

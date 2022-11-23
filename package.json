@@ -1,20 +1,22 @@
 {
   "name": "web-ext-msg-passing",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "functional interface web extension message passing wrapped",
-  "type": "module",
-  "module": "dist/index.js",
-  "main": "dist/index.js",
+  "module": "dist/es2015/index.js",
+  "main": "dist/cjs/index.js",
   "source": "src/index.ts",
-  "types": "dist/index.d.ts",
+  "types": "dist/es2015/index.d.ts",
   "exports": {
-    ".": {
-      "default": "./dist/index.js"
-    }
+    "import": "./dist/es2015/index.js",
+    "require": "./dist/cjs/index.js",
+    "esm": "./dist/es2015/index.js"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "build": "npm run build:es2015 && npm run build:esm && npm run build:cjs",
+    "build:es2015": "tsc --module es2015 --target es2015 --outDir dist/es2015",
+    "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs"
   },
   "keywords": [
     "browser",
@@ -32,5 +34,6 @@
   "devDependencies": {
     "@types/chrome": "^0.0.202",
     "typescript": "^4.9.3"
-  }
+  },
+  "dependencies": {}
 }
